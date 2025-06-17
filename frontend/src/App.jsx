@@ -1,11 +1,14 @@
 import './App.css'
+import LoginForm from './components/LoginForm'
+import SignUp from './pages/Signup'
 
 function App() {
 
   return (
-    <div className='text-[50px]'>
-      Hello World
-    </div>
+    <>
+    {/* <SignUp/> */}
+    <LoginForm/>
+    </>
   )
 }
 
