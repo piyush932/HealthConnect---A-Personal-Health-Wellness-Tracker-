@@ -8,6 +8,6 @@ public class FullStackProjectApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FullStackProjectApplication.class, args);
-	}
 
+	}
 }
