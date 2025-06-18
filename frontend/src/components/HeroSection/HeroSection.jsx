@@ -31,26 +31,31 @@ const sections = [
 ];
 
 const HeroSection = () => (
-  <section className="pt-28 pb-16 bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen">
+  <section className="pt-10 pb-16 bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen">
     <div className="container mx-auto flex flex-col space-y-16 px-4 md:px-8">
-      {/* Responsive one-line overview */}
-      <div className="w-full flex justify-center mb-8">
-        <p className="text-base md:text-lg lg:text-xl font-medium text-blue-800 text-center whitespace-nowrap overflow-x-auto">
+      {/* Overview */}
+      <div className="w-full flex justify-center mb-4">
+        <p className="text-base md:text-lg lg:text-xl font-medium text-blue-800 text-center max-w-4xl mx-auto px-2">
           {overview}
         </p>
       </div>
+
+      {/* Sections */}
       {sections.map((section, idx) => (
         <div
           key={section.title}
-          className={`
-            grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch
-            ${idx % 2 === 1 ? "lg:flex-row-reverse" : ""}
-          `}
+          className={`flex flex-col gap-y-6 lg:gap-8 lg:flex-row items-center ${
+            idx % 2 === 1 ? "lg:flex-row-reverse" : ""
+          }`}
         >
           {/* Text */}
-          <div className="flex flex-col justify-center px-2 py-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-blue-700 mb-4">{section.title}</h2>
-            <p className="text-base md:text-lg text-gray-700 mb-6">{section.description}</p>
+          <div className="flex flex-col justify-center px-2 py-4 lg:w-1/2">
+            <h2 className="text-2xl md:text-3xl font-bold text-blue-700 mb-4">
+              {section.title}
+            </h2>
+            <p className="text-base md:text-lg text-gray-700 mb-6">
+              {section.description}
+            </p>
             <a
               href="/"
               className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
@@ -58,8 +63,9 @@ const HeroSection = () => (
               Get Started
             </a>
           </div>
+
           {/* Image */}
-          <div className="flex items-center justify-center px-2 py-4 h-full">
+          <div className="flex items-center justify-center px-2 py-4 lg:w-1/2">
             <div className="w-full h-full aspect-[4/3] max-h-[340px] md:max-h-[420px] lg:max-h-none flex items-center justify-center">
               <img
                 src={section.image}
