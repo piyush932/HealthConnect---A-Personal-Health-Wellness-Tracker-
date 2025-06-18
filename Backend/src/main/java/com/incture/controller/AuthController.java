@@ -68,4 +68,10 @@ public class AuthController {
 
         return ResponseEntity.ok(new AuthResponse(token));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        // No backend logout logic for JWT
+        return ResponseEntity.ok("Logged out successfully");
+    }
 }
