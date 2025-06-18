@@ -11,7 +11,7 @@ function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const protectedRoutes = ["/userprofile", "/workout", "/progress", "/history"];
+  const protectedRoutes = ["/userprofile", "/workout", "/progress", "/history","/sleep"];
 
   // ✅ Check token from localStorage on mount and on custom event
   useEffect(() => {

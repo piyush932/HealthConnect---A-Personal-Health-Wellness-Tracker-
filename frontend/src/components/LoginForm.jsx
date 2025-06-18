@@ -20,7 +20,7 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
+      const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,6 +46,15 @@ export default function LoginForm() {
       setError(err.message || "Invalid credentials.");
     }
   };
+
+//   const onSubmit = async (data) => {
+//   // Just navigate directly without auth check
+//   console.log("Form submitted with:", data);
+//   alert("Login successful (dummy)!");
+//   localStorage.setItem("token", "dummy-token"); // optional dummy token
+//   navigate("/userprofile");
+// };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
