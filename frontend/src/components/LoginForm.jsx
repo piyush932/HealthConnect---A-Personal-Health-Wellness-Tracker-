@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Dumbbell } from "lucide-react";
-import Input from "./Input"; 
-import { Link } from "react-router-dom";
+import Input from "./Input";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
   const {
@@ -14,10 +14,37 @@ export default function LoginForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setError("");
-    console.log("Form Data:", data); 
+
+    try {
+      const response = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Login failed");
+      }
+
+      const { token } = result;
+
+      localStorage.setItem("token", token);
+      window.dispatchEvent(new Event("authChanged"));
+
+      alert("Login successful!");
+      navigate("/userprofile");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message || "Invalid credentials.");
+    }
   };
 
   return (
@@ -28,22 +55,23 @@ export default function LoginForm() {
           <h1 className="text-5xl font-bold text-blue-600">HealthConnect</h1>
         </div>
         <div>
-          <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">
-            Sign In
-          </h2>
+          <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">Sign In</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Stay updated on your fitness journey
           </p>
         </div>
-        <div className="text-center text-red-600">
-          {error && <p>{error}</p>}
-        </div>
+
+        {error && (
+          <div className="text-center text-red-600">
+            <p>{error}</p>
+          </div>
+        )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
               <Input
-                label="Email: "
+                label="Email:"
                 placeholder="Enter your email"
                 type="email"
                 autoComplete="email"
@@ -52,7 +80,7 @@ export default function LoginForm() {
                   validate: {
                     matchPattern: (value) =>
                       /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                      "Email address must be a valid address",
+                      "Email address must be valid",
                   },
                 })}
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
@@ -94,10 +122,7 @@ export default function LoginForm() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
+              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                 Forgot password?
               </a>
             </div>
@@ -115,13 +140,10 @@ export default function LoginForm() {
 
         <div className="text-center">
           <p className="mt-2 text-sm text-gray-600">
-            New to FitnessApp?{" "}
-            {/* <Link
-              to="/signup"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
+            New to HealthConnect?{" "}
+            <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
               Join now
-            </Link> */}
+            </Link>
           </p>
         </div>
       </div>
