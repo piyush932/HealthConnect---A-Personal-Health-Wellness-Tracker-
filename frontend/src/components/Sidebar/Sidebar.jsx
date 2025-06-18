@@ -1,6 +1,6 @@
-import React from 'react';
-import { Dumbbell, Home, BarChart2, Clock, User } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import { Dumbbell, Home, BarChart2, Clock, User } from "lucide-react";
+import { NavLink } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 
 function SideBar({ isSidebarOpen }) {
@@ -10,13 +10,17 @@ function SideBar({ isSidebarOpen }) {
   };
 
   return (
-    <div className={`md:w-64 h-auto md:mr-0 pt-8 bg-gray-100 ${isSidebarOpen ? 'block' : 'hidden'} md:block`}>
+    <div
+      className={`md:w-64 h-auto md:mr-0 pt-8 bg-gray-100 ${
+        isSidebarOpen ? "block" : "hidden"
+      } md:block`}
+    >
       <nav className="flex flex-col space-y-2 pl-4 no-underline">
-        <NavLink  
+        <NavLink
           to="/dashboard"
           className={({ isActive }) =>
             `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? 'text-indigo-700 bg-indigo-100' : 'text-gray-700'
+              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
             }`
           }
         >
@@ -24,11 +28,11 @@ function SideBar({ isSidebarOpen }) {
           Dashboard
         </NavLink>
 
-        <NavLink  
+        <NavLink
           to="/userprofile"
           className={({ isActive }) =>
             `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? 'text-indigo-700 bg-indigo-100' : 'text-gray-700'
+              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
             }`
           }
         >
@@ -40,7 +44,7 @@ function SideBar({ isSidebarOpen }) {
           to="/workout"
           className={({ isActive }) =>
             `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300  no-underline ${
-              isActive ? 'text-indigo-700 bg-indigo-100' : 'text-gray-700'
+              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
             }`
           }
         >
@@ -52,7 +56,7 @@ function SideBar({ isSidebarOpen }) {
           to="/progress"
           className={({ isActive }) =>
             `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? 'text-indigo-700 bg-indigo-100' : 'text-gray-700'
+              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
             }`
           }
         >
@@ -64,7 +68,7 @@ function SideBar({ isSidebarOpen }) {
           to="/history"
           className={({ isActive }) =>
             `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? 'text-indigo-700 bg-indigo-100' : 'text-gray-700'
+              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
             }`
           }
         >
@@ -73,11 +77,23 @@ function SideBar({ isSidebarOpen }) {
         </NavLink>
 
         <NavLink
+          to="/sleep"
+          className={({ isActive }) =>
+            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
+              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
+            }`
+          }
+        >
+          <Clock className="mr-3 h-5 w-5" />
+          Sleep Tracker
+        </NavLink>
+
+        <NavLink
           to="/login"
           onClick={handleLogOut}
           className={({ isActive }) =>
             `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? 'text-indigo-700 bg-indigo-100' : 'text-gray-700'
+              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
             }`
           }
         >
