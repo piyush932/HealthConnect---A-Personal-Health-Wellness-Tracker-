@@ -11,7 +11,7 @@ function SideBar({ isSidebarOpen }) {
 
   return (
     <div
-      className={`md:w-64 h-auto md:mr-0 pt-8 bg-gray-100 ${
+      className={`md:w-64 h-auto md:mr-0 pt-8 bg-gray-100 mt-10 ${
         isSidebarOpen ? "block" : "hidden"
       } md:block`}
     >
@@ -49,7 +49,7 @@ function SideBar({ isSidebarOpen }) {
           }
         >
           <Dumbbell className="mr-3 h-5 w-5" />
-          Activity
+          Workout
         </NavLink>
 
         <NavLink
