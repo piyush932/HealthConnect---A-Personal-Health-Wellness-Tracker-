@@ -60,13 +60,12 @@ export default function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="flex justify-center items-center">
-          <Dumbbell className="h-14 w-14 mr-3 text-blue-600" />
           <h1 className="text-5xl font-bold text-blue-600">HealthConnect</h1>
         </div>
         <div>
           <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">Sign In</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Stay updated on your fitness journey
+            "Know your numbers, know your results"
           </p>
         </div>
 
