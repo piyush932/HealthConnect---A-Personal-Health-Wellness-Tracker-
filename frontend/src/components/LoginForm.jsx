@@ -16,44 +16,44 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // const onSubmit = async (data) => {
+  //   setError("");
+
+  //   try {
+  //     const response = await fetch("http://localhost:8080/auth/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(data),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(result.message || "Login failed");
+  //     }
+
+  //     const { token } = result;
+
+  //     localStorage.setItem("token", token);
+  //     window.dispatchEvent(new Event("authChanged"));
+
+  //     alert("Login successful!");
+  //     navigate("/userprofile");
+  //   } catch (err) {
+  //     console.error("Login error:", err);
+  //     setError(err.message || "Invalid credentials.");
+  //   }
+  // };
+
   const onSubmit = async (data) => {
-    setError("");
-
-    try {
-      const response = await fetch("http://localhost:8080/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Login failed");
-      }
-
-      const { token } = result;
-
-      localStorage.setItem("token", token);
-      window.dispatchEvent(new Event("authChanged"));
-
-      alert("Login successful!");
-      navigate("/userprofile");
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err.message || "Invalid credentials.");
-    }
-  };
-
-//   const onSubmit = async (data) => {
-//   // Just navigate directly without auth check
-//   console.log("Form submitted with:", data);
-//   alert("Login successful (dummy)!");
-//   localStorage.setItem("token", "dummy-token"); // optional dummy token
-//   navigate("/userprofile");
-// };
+  // Just navigate directly without auth check
+  console.log("Form submitted with:", data);
+  alert("Login successful (dummy)!");
+  localStorage.setItem("token", "dummy-token"); // optional dummy token
+  navigate("/dashboard");
+};
 
 
   return (

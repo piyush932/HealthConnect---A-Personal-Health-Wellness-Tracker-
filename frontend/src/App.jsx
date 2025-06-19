@@ -14,6 +14,7 @@ import UserProfile from "./pages/UserProfile";
 import Workouts from "./pages/Workouts";
 import Progress from "./pages/Progress";
 import History from "./pages/History";
+import Dashboard from './pages/Dashboard';
 import SleepTracker from "./components/SleepTracker/SleepTracker";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route index element={<HeroSection />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<SignUp />} />
+        <Route path="dashboard" element={<Dashboard/>} />
         <Route path="userprofile" element={<UserProfile />} />
         <Route path="workout" element={<Workouts />} />
         <Route path="progress" element={<Progress />} />
