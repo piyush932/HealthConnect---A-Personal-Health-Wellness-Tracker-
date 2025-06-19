@@ -42,8 +42,7 @@ export default function SignUpForm() {
     <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="flex justify-center items-center">
-          <Dumbbell className="h-14 w-14 mr-3 text-blue-600" />
-          <h1 className="text-5xl font-extrabold text-blue-600">
+          <h1 className="text-5xl font-bold text-blue-600">
             HealthConnect
           </h1>
         </div>
