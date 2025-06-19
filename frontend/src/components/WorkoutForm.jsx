@@ -8,27 +8,30 @@ function WorkoutForm() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
-    try {
-      const response = await fetch('http://localhost:8080/activity', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-      });
+  try {
+    // Get the token from localStorage
+    const token = localStorage.getItem('token');
 
-      if (!response.ok) {
-        throw new Error('Failed to add activity');
-      }
+    const response = await fetch('http://localhost:8080/activity', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`  // Add Authorization header
+      },
+      body: JSON.stringify(data)
+    });
 
-      toast.success('Activity added successfully!');
-      reset();
-    } catch (error) {
-      console.error('Error adding activity:', error);
-      toast.error('Failed to add activity.');
+    if (!response.ok) {
+      throw new Error('Failed to add activity');
     }
-  };
 
+    toast.success('Activity added successfully!');
+    reset();
+  } catch (error) {
+    console.error('Error adding activity:', error);
+    toast.error('Failed to add activity.');
+  }
+};
   return (
     <div className="w-full max-w-6xl mt-10 mx-auto bg-white p-6 rounded-lg shadow-xl overflow-hidden">
       <h2 className="text-2xl font-bold text-blue-600 mb-6">Add Activity</h2>
@@ -42,7 +45,7 @@ function WorkoutForm() {
           <input
             type="date"
             id="date"
-            {...register("date", { required: "Date is required" })}
+            {...register("activityDate", { required: "Date is required" })}
             className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
           />
           {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
@@ -57,7 +60,7 @@ function WorkoutForm() {
           <input
             type="text"
             id="workout"
-            {...register("workout", { required: "Workout is required" })}
+            {...register("workoutType", { required: "Workout is required" })}
             className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., Chest, Arms"
           />
@@ -73,7 +76,7 @@ function WorkoutForm() {
           <input
             type="number"
             id="duration"
-            {...register("duration", {
+            {...register("durationMinutes", {
               required: "Duration is required",
               min: { value: 1, message: "Minimum 1 minute required" },
               valueAsNumber: true
@@ -93,7 +96,7 @@ function WorkoutForm() {
           <input
             type="number"
             id="calories"
-            {...register("calories", {
+            {...register("caloriesBurned", {
               required: "Calories is required",
               min: { value: 0, message: "Calories must be non-negative" },
               valueAsNumber: true
