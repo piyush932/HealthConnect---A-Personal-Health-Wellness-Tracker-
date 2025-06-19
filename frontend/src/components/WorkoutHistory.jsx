@@ -11,10 +11,16 @@ function WorkoutHistory() {
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
 
+  const token = localStorage.getItem('token');
+
   const fetchAllActivities = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8080/activity');
+      const res = await fetch('http://localhost:8080/activity', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       const data = await res.json();
       setWorkouts(data);
     } catch {
@@ -28,8 +34,11 @@ function WorkoutHistory() {
     if (!filterDate) return toast.error('Please select a date');
     setLoading(true);
     try {
-      const formattedInput = formatInputDate(filterDate); // DD-MM-YYYY
-      const res = await fetch(`http://localhost:8080/activity/byDate?date=${formattedInput}`);
+      const res = await fetch(`http://localhost:8080/activity/byDate?date=${filterDate}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!res.ok) throw new Error();
       const data = await res.json();
       setWorkouts(data);
@@ -44,9 +53,12 @@ function WorkoutHistory() {
     try {
       const res = await fetch(`http://localhost:8080/activity/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
       if (!res.ok) throw new Error();
-      setWorkouts((prev) => prev.filter((w) => w._id !== id));
+      setWorkouts((prev) => prev.filter((w) => w.id !== id));
       toast.success('Activity deleted');
     } catch {
       toast.error('Failed to delete activity');
@@ -54,7 +66,7 @@ function WorkoutHistory() {
   };
 
   const handleEditClick = (activity) => {
-    setEditId(activity._id);
+    setEditId(activity.id);
     setEditData({ ...activity });
   };
 
@@ -71,14 +83,15 @@ function WorkoutHistory() {
     try {
       const res = await fetch(`http://localhost:8080/activity/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify(editData),
       });
       if (!res.ok) throw new Error();
       toast.success('Activity updated');
-      setWorkouts((prev) =>
-        prev.map((w) => (w._id === id ? { ...w, ...editData } : w))
-      );
+      setWorkouts((prev) => prev.map((w) => (w.id === id ? { ...w, ...editData } : w)));
       setEditId(null);
       setEditData({});
     } catch {
@@ -86,17 +99,9 @@ function WorkoutHistory() {
     }
   };
 
-  const formatInputDate = (isoDate) => {
-    const [year, month, day] = isoDate.split('-');
-    return `${day}-${month}-${year}`;
-  };
-
-  const formatDate = (ddmmyyyy) => ddmmyyyy;
-
-  const isToday = (dateString) => {
-    const [day, month, year] = dateString.split('-').map(Number);
-    const inputDate = new Date(year, month - 1, day);
+  const isToday = (isoDate) => {
     const today = new Date();
+    const inputDate = new Date(isoDate);
     return (
       inputDate.getDate() === today.getDate() &&
       inputDate.getMonth() === today.getMonth() &&
@@ -154,59 +159,52 @@ function WorkoutHistory() {
               </thead>
               <tbody>
                 {workouts.map((w) => {
-                  const editable = isToday(w.date);
-
+                  const editable = isToday(w.activityDate);
                   return (
-                    <tr key={w._id} className="border-b">
-                      <td className="py-2 px-4">{formatDate(w.date)}</td>
+                    <tr key={w.id} className="border-b">
+                      <td className="py-2 px-4">{w.activityDate}</td>
                       <td className="py-2 px-4">
-                        {editId === w._id ? (
+                        {editId === w.id ? (
                           <input
                             type="text"
-                            value={editData.workout}
-                            onChange={(e) => handleChange('workout', e.target.value)}
+                            value={editData.workoutType}
+                            onChange={(e) => handleChange('workoutType', e.target.value)}
                             className="border px-2 py-1 rounded-md"
                           />
                         ) : (
-                          w.workout
+                          w.workoutType
                         )}
                       </td>
                       <td className="py-2 px-4">
-                        {editId === w._id ? (
+                        {editId === w.id ? (
                           <input
                             type="number"
-                            value={editData.duration}
-                            onChange={(e) =>
-                              handleChange('duration', parseInt(e.target.value))
-                            }
+                            value={editData.durationMinutes}
+                            onChange={(e) => handleChange('durationMinutes', parseInt(e.target.value))}
                             className="border px-2 py-1 rounded-md"
                           />
                         ) : (
-                          `${w.duration} mins`
+                          `${w.durationMinutes} mins`
                         )}
                       </td>
                       <td className="py-2 px-4">
-                        {editId === w._id ? (
+                        {editId === w.id ? (
                           <input
                             type="number"
-                            value={editData.calories}
-                            onChange={(e) =>
-                              handleChange('calories', parseInt(e.target.value))
-                            }
+                            value={editData.caloriesBurned}
+                            onChange={(e) => handleChange('caloriesBurned', parseInt(e.target.value))}
                             className="border px-2 py-1 rounded-md"
                           />
                         ) : (
-                          `${w.calories} kcals`
+                          `${w.caloriesBurned} kcals`
                         )}
                       </td>
                       <td className="py-2 px-4">
-                        {editId === w._id ? (
+                        {editId === w.id ? (
                           <input
                             type="number"
                             value={editData.stepsTaken}
-                            onChange={(e) =>
-                              handleChange('stepsTaken', parseInt(e.target.value))
-                            }
+                            onChange={(e) => handleChange('stepsTaken', parseInt(e.target.value))}
                             className="border px-2 py-1 rounded-md"
                           />
                         ) : (
@@ -215,10 +213,10 @@ function WorkoutHistory() {
                       </td>
                       <td className="py-2 px-4 space-x-2">
                         {editable ? (
-                          editId === w._id ? (
+                          editId === w.id ? (
                             <>
                               <button
-                                onClick={() => handleSave(w._id)}
+                                onClick={() => handleSave(w.id)}
                                 className="text-green-600 hover:underline"
                               >
                                 Save
@@ -239,7 +237,7 @@ function WorkoutHistory() {
                                 Edit
                               </button>
                               <button
-                                onClick={() => handleDelete(w._id)}
+                                onClick={() => handleDelete(w.id)}
                                 className="text-red-600 hover:underline"
                               >
                                 Delete
