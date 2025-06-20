@@ -1,12 +1,15 @@
 import React from "react";
 import { Dumbbell, Home, BarChart2, Clock, User } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 
 function SideBar({ isSidebarOpen }) {
+  const navigate = useNavigate();
+
   const handleLogOut = () => {
-    // Dummy logout handler (no Appwrite logic)
-    console.log("Logged out (dummy)");
+    localStorage.removeItem("token"); 
+    window.dispatchEvent(new Event("authChanged")); 
+    navigate("/"); 
   };
 
   return (
@@ -88,18 +91,13 @@ function SideBar({ isSidebarOpen }) {
           Sleep Tracker
         </NavLink>
 
-        <NavLink
-          to="/login"
+        <button
           onClick={handleLogOut}
-          className={({ isActive }) =>
-            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
-            }`
-          }
+          className="flex items-center px-4 py-2 text-gray-700 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300"
         >
           <BiLogOut className="mr-3 h-5 w-5" />
           Logout
-        </NavLink>
+        </button>
       </nav>
     </div>
   );
