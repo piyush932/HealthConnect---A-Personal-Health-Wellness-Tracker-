@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Search } from 'lucide-react';
 import { toast, ToastContainer, Slide } from 'react-toastify';
 import { Loader } from 'rsuite';
+import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
 function WorkoutHistory() {
@@ -17,15 +18,13 @@ function WorkoutHistory() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8080/activity', {
+      const res = await axios.get('http://localhost:8080/activity', {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json'
         }
       });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      setWorkouts(data);
+      setWorkouts(res.data);
     } catch {
       toast.error('Failed to load activities');
     } finally {
@@ -38,15 +37,13 @@ function WorkoutHistory() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:8080/activity/byDate?date=${filterDate}`, {
+      const res = await axios.get(`http://localhost:8080/activity/byDate?date=${filterDate}`, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json'
         }
       });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      setWorkouts(data);
+      setWorkouts(res.data);
     } catch {
       toast.error('No activity found on selected date');
     } finally {
@@ -57,13 +54,11 @@ function WorkoutHistory() {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:8080/activity/${id}`, {
-        method: 'DELETE',
+      await axios.delete(`http://localhost:8080/activity/${id}`, {
         headers: {
           'Authorization': 'Bearer ' + token
         }
       });
-      if (!res.ok) throw new Error();
       setWorkouts((prev) => prev.filter((w) => w.id !== id));
       toast.success('Activity deleted');
     } catch {
@@ -88,15 +83,12 @@ function WorkoutHistory() {
   const handleSave = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:8080/activity/${id}`, {
-        method: 'PUT',
+      await axios.put(`http://localhost:8080/activity/${id}`, editData, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editData),
+        }
       });
-      if (!res.ok) throw new Error();
       toast.success('Activity updated');
       setWorkouts((prev) =>
         prev.map((w) => (w.id === id ? { ...w, ...editData } : w))
@@ -119,7 +111,6 @@ function WorkoutHistory() {
 
   const isToday = (isoDate) => {
     if (!isoDate) return false;
-    const inputDate = new Date(isoDate);
     const today = new Date();
     const inputDate = new Date(isoDate);
     return (

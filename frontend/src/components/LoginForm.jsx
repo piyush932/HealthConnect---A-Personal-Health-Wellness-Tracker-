@@ -4,6 +4,9 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Dumbbell } from "lucide-react";
 import Input from "./Input";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast, ToastContainer, Slide } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function LoginForm() {
   const {
@@ -13,41 +16,26 @@ export default function LoginForm() {
   } = useForm();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    setError("");
-
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await axios.post("http://localhost:8080/auth/login", data);
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Login failed");
-      }
-
-      const { token } = result;
+      const { token } = response.data;
 
       localStorage.setItem("token", token);
       window.dispatchEvent(new Event("authChanged"));
 
-      alert("Login successful!");
+      toast.success("Login successful!");
       navigate("/userprofile");
     } catch (err) {
       console.error("Login error:", err);
-      setError(err.message || "Invalid credentials.");
+      toast.error(err.response?.data?.message || "Invalid credentials.");
     }
   };
 
-//   const onSubmit = async (data) => {
+//     const onSubmit = async (data) => {
 //   // Just navigate directly without auth check
 //   console.log("Form submitted with:", data);
 //   alert("Login successful (dummy)!");
@@ -55,25 +43,21 @@ export default function LoginForm() {
 //   navigate("/dashboard");
 // };
 
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar transition={Slide} />
+
       <div className="max-w-md w-full space-y-8">
         <div className="flex justify-center items-center">
           <h1 className="text-5xl font-bold text-blue-600">HealthConnect</h1>
         </div>
+
         <div>
           <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">Sign In</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             "Know your numbers, know your results"
           </p>
         </div>
-
-        {error && (
-          <div className="text-center text-red-600">
-            <p>{error}</p>
-          </div>
-        )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm space-y-4">
