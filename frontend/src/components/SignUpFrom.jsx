@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import Input from "./Input";
 import { Dumbbell } from "lucide-react";
+import axios from "axios";
+import { toast, ToastContainer, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUpForm() {
   const {
@@ -12,40 +15,30 @@ export default function SignUpForm() {
     reset,
   } = useForm();
 
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await axios.post("http://localhost:8080/auth/register", data);
 
-      const result = await response.json();
-
-      if (response.ok) {
-        alert("Registration successful!");
-        reset(); // Clear form
-      } else {
-        alert(result.message || "Registration failed");
-      }
+      toast.success(response.data?.message || "Registration successful!");
+      reset(); // Clear form
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("An error occurred during registration.");
+      const message = error.response?.data?.message || "Registration failed";
+      toast.error(message);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar transition={Slide} />
+
       <div className="max-w-md w-full space-y-8">
         <div className="flex justify-center items-center">
-          <h1 className="text-5xl font-bold text-blue-600">
-            HealthConnect
-          </h1>
+          <h1 className="text-5xl font-bold text-blue-600">HealthConnect</h1>
         </div>
+
         <div>
           <h2 className="mt-5 text-center text-2xl font-bold text-gray-900">
             Start Your Fitness Journey
@@ -64,11 +57,7 @@ export default function SignUpForm() {
                 type="text"
                 {...register("name", { required: "Name is required" })}
               />
-              {errors.name && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.name.message}
-                </p>
-              )}
+              {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>}
             </div>
 
             <div>
@@ -84,11 +73,7 @@ export default function SignUpForm() {
                   },
                 })}
               />
-              {errors.email && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>}
             </div>
 
             <div className="relative">
@@ -116,9 +101,7 @@ export default function SignUpForm() {
                 )}
               </button>
               {errors.password && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.password.message}
-                </p>
+                <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
               )}
             </div>
 
@@ -133,11 +116,7 @@ export default function SignUpForm() {
                   valueAsNumber: true,
                 })}
               />
-              {errors.age && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.age.message}
-                </p>
-              )}
+              {errors.age && <p className="text-sm text-red-600 mt-1">{errors.age.message}</p>}
             </div>
 
             <div>
@@ -151,11 +130,7 @@ export default function SignUpForm() {
                   valueAsNumber: true,
                 })}
               />
-              {errors.weight && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.weight.message}
-                </p>
-              )}
+              {errors.weight && <p className="text-sm text-red-600 mt-1">{errors.weight.message}</p>}
             </div>
 
             <div>
@@ -170,11 +145,7 @@ export default function SignUpForm() {
                   valueAsNumber: true,
                 })}
               />
-              {errors.height && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.height.message}
-                </p>
-              )}
+              {errors.height && <p className="text-sm text-red-600 mt-1">{errors.height.message}</p>}
             </div>
           </div>
 

@@ -1,39 +1,34 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { CalendarIcon, Dumbbell, Clock, Flame, Footprints } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer, Slide } from 'react-toastify';
+import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
 function WorkoutForm() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
-  try {
-    // Get the token from localStorage
-    const token = localStorage.getItem('token');
+    try {
+      const token = localStorage.getItem('token');
 
-    const response = await fetch('http://localhost:8080/activity', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`  // Add Authorization header
-      },
-      body: JSON.stringify(data)
-    });
+      await axios.post('http://localhost:8080/activity', data, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to add activity');
+      toast.success('Activity added successfully!');
+      reset();
+    } catch (error) {
+      console.error('Error adding activity:', error);
+      toast.error(error.response?.data?.message || 'Failed to add activity.');
     }
+  };
 
-    toast.success('Activity added successfully!');
-    reset();
-  } catch (error) {
-    console.error('Error adding activity:', error);
-    toast.error('Failed to add activity.');
-  }
-};
   return (
     <div className="w-full max-w-6xl mt-10 mx-auto bg-white p-6 rounded-lg shadow-xl overflow-hidden">
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar transition={Slide} />
       <h2 className="text-2xl font-bold text-blue-600 mb-6">Add Activity</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Date */}
@@ -48,7 +43,7 @@ function WorkoutForm() {
             {...register("activityDate", { required: "Date is required" })}
             className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
           />
-          {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
+          {errors.activityDate && <p className="text-sm text-red-500">{errors.activityDate.message}</p>}
         </div>
 
         {/* Workout */}
@@ -64,7 +59,7 @@ function WorkoutForm() {
             className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., Chest, Arms"
           />
-          {errors.workout && <p className="text-sm text-red-500">{errors.workout.message}</p>}
+          {errors.workoutType && <p className="text-sm text-red-500">{errors.workoutType.message}</p>}
         </div>
 
         {/* Duration */}
@@ -84,7 +79,7 @@ function WorkoutForm() {
             className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., 30"
           />
-          {errors.duration && <p className="text-sm text-red-500">{errors.duration.message}</p>}
+          {errors.durationMinutes && <p className="text-sm text-red-500">{errors.durationMinutes.message}</p>}
         </div>
 
         {/* Calories */}
@@ -104,7 +99,7 @@ function WorkoutForm() {
             className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., 500"
           />
-          {errors.calories && <p className="text-sm text-red-500">{errors.calories.message}</p>}
+          {errors.caloriesBurned && <p className="text-sm text-red-500">{errors.caloriesBurned.message}</p>}
         </div>
 
         {/* Steps Taken */}
