@@ -11,6 +11,8 @@ function WorkoutHistory() {
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
 
+  const token = localStorage.getItem('token');
+
   const fetchAllActivities = async () => {
     setLoading(true);
     try {
@@ -119,6 +121,7 @@ function WorkoutHistory() {
     if (!isoDate) return false;
     const inputDate = new Date(isoDate);
     const today = new Date();
+    const inputDate = new Date(isoDate);
     return (
       inputDate.getDate() === today.getDate() &&
       inputDate.getMonth() === today.getMonth() &&

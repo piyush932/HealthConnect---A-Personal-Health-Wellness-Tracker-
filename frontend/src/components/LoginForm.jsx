@@ -52,7 +52,7 @@ export default function LoginForm() {
 //   console.log("Form submitted with:", data);
 //   alert("Login successful (dummy)!");
 //   localStorage.setItem("token", "dummy-token"); // optional dummy token
-//   navigate("/userprofile");
+//   navigate("/dashboard");
 // };
 
 
