@@ -16,11 +16,14 @@ function WorkoutHistory() {
   const fetchAllActivities = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch('http://localhost:8080/activity', {
         headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        }
       });
+      if (!res.ok) throw new Error();
       const data = await res.json();
       setWorkouts(data);
     } catch {
@@ -34,10 +37,12 @@ function WorkoutHistory() {
     if (!filterDate) return toast.error('Please select a date');
     setLoading(true);
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(`http://localhost:8080/activity/byDate?date=${filterDate}`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        }
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
@@ -51,11 +56,12 @@ function WorkoutHistory() {
 
   const handleDelete = async (id) => {
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(`http://localhost:8080/activity/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+          'Authorization': 'Bearer ' + token
+        }
       });
       if (!res.ok) throw new Error();
       setWorkouts((prev) => prev.filter((w) => w.id !== id));
@@ -81,17 +87,20 @@ function WorkoutHistory() {
 
   const handleSave = async (id) => {
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(`http://localhost:8080/activity/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(editData),
       });
       if (!res.ok) throw new Error();
       toast.success('Activity updated');
-      setWorkouts((prev) => prev.map((w) => (w.id === id ? { ...w, ...editData } : w)));
+      setWorkouts((prev) =>
+        prev.map((w) => (w.id === id ? { ...w, ...editData } : w))
+      );
       setEditId(null);
       setEditData({});
     } catch {
@@ -99,7 +108,18 @@ function WorkoutHistory() {
     }
   };
 
+  const formatDate = (isoDate) => {
+    if (!isoDate) return '';
+    const dateObj = new Date(isoDate);
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const year = dateObj.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
   const isToday = (isoDate) => {
+    if (!isoDate) return false;
+    const inputDate = new Date(isoDate);
     const today = new Date();
     const inputDate = new Date(isoDate);
     return (
@@ -116,8 +136,6 @@ function WorkoutHistory() {
   return (
     <div className="bg-white p-6 mt-8 rounded-lg shadow-md">
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar transition={Slide} />
-
-      {/* Filter */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
         <label className="flex items-center gap-2 text-gray-700 font-medium">
           <Calendar className="w-5 h-5 text-blue-600" />
@@ -162,7 +180,7 @@ function WorkoutHistory() {
                   const editable = isToday(w.activityDate);
                   return (
                     <tr key={w.id} className="border-b">
-                      <td className="py-2 px-4">{w.activityDate}</td>
+                      <td className="py-2 px-4">{formatDate(w.activityDate)}</td>
                       <td className="py-2 px-4">
                         {editId === w.id ? (
                           <input
