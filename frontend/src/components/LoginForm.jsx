@@ -18,30 +18,30 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await axios.post("http://localhost:8080/auth/login", data);
+  // const onSubmit = async (data) => {
+  //   try {
+  //     const response = await axios.post("http://localhost:8080/auth/login", data);
 
-      const { token } = response.data;
+  //     const { token } = response.data;
 
-      localStorage.setItem("token", token);
-      window.dispatchEvent(new Event("authChanged"));
+  //     localStorage.setItem("token", token);
+  //     window.dispatchEvent(new Event("authChanged"));
 
-      toast.success("Login successful!");
-      navigate("/userprofile");
-    } catch (err) {
-      console.error("Login error:", err);
-      toast.error(err.response?.data?.message || "Invalid credentials.");
-    }
-  };
+  //     toast.success("Login successful!");
+  //     navigate("/userprofile");
+  //   } catch (err) {
+  //     console.error("Login error:", err);
+  //     toast.error(err.response?.data?.message || "Invalid credentials.");
+  //   }
+  // };
 
-//     const onSubmit = async (data) => {
-//   // Just navigate directly without auth check
-//   console.log("Form submitted with:", data);
-//   alert("Login successful (dummy)!");
-//   localStorage.setItem("token", "dummy-token"); // optional dummy token
-//   navigate("/dashboard");
-// };
+    const onSubmit = async (data) => {
+  // Just navigate directly without auth check
+  console.log("Form submitted with:", data);
+  alert("Login successful (dummy)!");
+  localStorage.setItem("token", "dummy-token"); // optional dummy token
+  navigate("/dashboard");
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">

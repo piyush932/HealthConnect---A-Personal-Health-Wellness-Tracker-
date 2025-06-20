@@ -72,7 +72,7 @@ function Layout() {
         {isAuthenticated && protectedRoutes.includes(location.pathname) && (
           <SideBar isSidebarOpen={isSidebarOpen} />
         )}
-        <main className="flex-1 p-4 pt-20">
+        <main className="flex-1 p-4">
           <Outlet />
         </main>
       </div>
