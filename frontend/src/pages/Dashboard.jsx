@@ -4,6 +4,7 @@ import GoalsProgress from '../components/GoalsProgress';
 import DoughnutChart from '../components/PiChart';
 import WaterIntakeChart from '../components/WaterIntakeChart';
 import SleepTrackerChart from '../components/SleepTrackerChart';
+import MoodChart from '../components/MoodChart';
 
 export default function Dashboard() {
   const [profile, setProfile] = React.useState({
@@ -53,6 +54,7 @@ export default function Dashboard() {
                 <div className= {loading ? ('hidden'):(" ")}>
                 <WaterIntakeChart/>
                 <SleepTrackerChart/>
+                <MoodChart/>
                 </div>
 
                 {/* Charts and Suggestions */}
