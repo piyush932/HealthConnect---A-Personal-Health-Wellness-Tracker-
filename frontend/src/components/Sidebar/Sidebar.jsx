@@ -1,105 +1,54 @@
 import React from "react";
-import { Dumbbell, Home, BarChart2, Clock, User } from "lucide-react";
+import { Dumbbell, Home, BarChart2, Clock, User,Smile } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 
-function SideBar({ isSidebarOpen }) {
+const links = [
+  { name: "Dashboard", path: "/dashboard", icon: <Home className="h-5 w-5" /> },
+  { name: "Profile", path: "/userprofile", icon: <User className="h-5 w-5" /> },
+  { name: "Workout", path: "/workout", icon: <Dumbbell className="h-5 w-5" /> },
+  { name: "Progress", path: "/progress", icon: <BarChart2 className="h-5 w-5" /> },
+  { name: "History", path: "/history", icon: <Clock className="h-5 w-5" /> },
+  { name: "Sleep Tracker", path: "/sleep", icon: <Clock className="h-5 w-5" /> },
+   { name: "Mood Tracker", path: "/mood", icon: <Smile className="h-5 w-5" /> },
+];
+
+function SideBar() {
   const navigate = useNavigate();
 
   const handleLogOut = () => {
-    localStorage.removeItem("token"); 
-    window.dispatchEvent(new Event("authChanged")); 
-    navigate("/"); 
+    localStorage.removeItem("token");
+    window.dispatchEvent(new Event("authChanged"));
+    navigate("/");
   };
 
   return (
-    <div
-      className={`md:w-64 h-auto md:mr-0 pt-8 bg-gray-100 mt-10 ${
-        isSidebarOpen ? "block" : "hidden"
-      } md:block`}
-    >
-      <nav className="flex flex-col space-y-2 pl-4 no-underline">
+    <>
+      {links.map((link) => (
         <NavLink
-          to="/dashboard"
+          key={link.path}
+          to={link.path}
           className={({ isActive }) =>
-            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
+            `flex items-center gap-2 px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap text-sm font-medium no-underline ${
+              isActive
+                ? "text-indigo-700 bg-indigo-100"
+                : "text-gray-700 hover:text-indigo-700 hover:bg-indigo-100"
             }`
           }
         >
-          <Home className="mr-3 h-5 w-5" />
-          Dashboard
+          {link.icon}
+          {link.name}
         </NavLink>
+      ))}
 
-        <NavLink
-          to="/userprofile"
-          className={({ isActive }) =>
-            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
-            }`
-          }
-        >
-          <User className="mr-3 h-5 w-5" />
-          Profile
-        </NavLink>
-
-        <NavLink
-          to="/workout"
-          className={({ isActive }) =>
-            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300  no-underline ${
-              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
-            }`
-          }
-        >
-          <Dumbbell className="mr-3 h-5 w-5" />
-          Workout
-        </NavLink>
-
-        <NavLink
-          to="/progress"
-          className={({ isActive }) =>
-            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
-            }`
-          }
-        >
-          <BarChart2 className="mr-3 h-5 w-5" />
-          Progress
-        </NavLink>
-
-        <NavLink
-          to="/history"
-          className={({ isActive }) =>
-            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
-            }`
-          }
-        >
-          <Clock className="mr-3 h-5 w-5" />
-          History
-        </NavLink>
-
-        <NavLink
-          to="/sleep"
-          className={({ isActive }) =>
-            `flex items-center px-4 py-2 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300 no-underline ${
-              isActive ? "text-indigo-700 bg-indigo-100" : "text-gray-700"
-            }`
-          }
-        >
-          <Clock className="mr-3 h-5 w-5" />
-          Sleep Tracker
-        </NavLink>
-
-        <button
-          onClick={handleLogOut}
-          className="flex items-center px-4 py-2 text-gray-700 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-300"
-        >
-          <BiLogOut className="mr-3 h-5 w-5" />
-          Logout
-        </button>
-      </nav>
-    </div>
+      <button
+        onClick={handleLogOut}
+        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-indigo-700 hover:bg-indigo-100 rounded-md transition-colors duration-200 whitespace-nowrap"
+      >
+        <BiLogOut className="h-5 w-5" />
+        Logout
+      </button>
+    </>
   );
 }
 

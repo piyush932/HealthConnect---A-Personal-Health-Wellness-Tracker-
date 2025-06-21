@@ -5,15 +5,21 @@ import Footer from "../components/Footer/Footer";
 import SideBar from "../components/Sidebar/Sidebar";
 
 function Layout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const protectedRoutes = ["/dashboard","/userprofile", "/workout", "/progress", "/history","/sleep"];
+  const protectedRoutes = [
+    "/dashboard",
+    "/userprofile",
+    "/workout",
+    "/progress",
+    "/history",
+    "/sleep",
+    "/mood"
+  ];
 
-  // ✅ Check token from localStorage on mount and on custom event
   useEffect(() => {
     const checkToken = () => {
       const token = localStorage.getItem("token");
@@ -22,16 +28,12 @@ function Layout() {
     };
 
     checkToken();
-
-    // 🔁 Listen for auth change events
     window.addEventListener("authChanged", checkToken);
-
     return () => {
       window.removeEventListener("authChanged", checkToken);
     };
   }, []);
 
-  // 🔁 Redirect unauthenticated users trying to access protected routes
   useEffect(() => {
     if (!loading && protectedRoutes.includes(location.pathname)) {
       const token = localStorage.getItem("token");
@@ -41,12 +43,10 @@ function Layout() {
     }
   }, [loading, location.pathname, navigate]);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-
   const handleLoginToggle = () => {
     if (isAuthenticated) {
-      localStorage.removeItem("token"); // logout
-      window.dispatchEvent(new Event("authChanged")); // inform layout
+      localStorage.removeItem("token");
+      window.dispatchEvent(new Event("authChanged"));
       setIsAuthenticated(false);
       navigate("/");
     } else {
@@ -68,14 +68,19 @@ function Layout() {
         isAuthenticated={isAuthenticated}
         handleLoginToggle={handleLoginToggle}
       />
-      <div className="md:flex flex-1 bg-gray-100">
-        {isAuthenticated && protectedRoutes.includes(location.pathname) && (
-          <SideBar isSidebarOpen={isSidebarOpen} />
-        )}
-        <main className="flex-1 p-4">
-          <Outlet />
-        </main>
-      </div>
+
+      {isAuthenticated && protectedRoutes.includes(location.pathname) && (
+        <div className="w-full overflow-x-auto bg-white border-b shadow-sm">
+          <div className="flex gap-6 px-4 py-3 min-w-max justify-start items-center">
+            <SideBar layout="horizontal" />
+          </div>
+        </div>
+      )}
+
+      <main className="flex-1 p-4 bg-gray-100">
+        <Outlet />
+      </main>
+
       <Footer />
     </div>
   );
