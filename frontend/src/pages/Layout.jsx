@@ -17,6 +17,7 @@ function Layout() {
     "/progress",
     "/history",
     "/sleep",
+    "/sleepHistory",
     "/mood"
   ];
 

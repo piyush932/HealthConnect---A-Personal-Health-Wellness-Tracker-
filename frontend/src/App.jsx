@@ -15,9 +15,9 @@ import Workouts from "./pages/Workouts";
 import Progress from "./pages/Progress";
 import History from "./pages/History";
 import Dashboard from './pages/Dashboard';
-import SleepTracker from "./components/SleepTracker/SleepTracker";
-import SleepForm from "./components/SleepForm";
+import SleepForm from "./components/SleepTracker/SleepForm";
 import MoodForm from "./components/MoodForm";
+import SleepHistory from "./components/SleepTracker/SleepHistory";
 
 function App() {
   const router = createBrowserRouter(
@@ -32,6 +32,7 @@ function App() {
         <Route path="progress" element={<Progress />} />
         <Route path="history" element={<History />} />
         <Route path="sleep" element={<SleepForm />} />
+        <Route path="sleepHistory" element={<SleepHistory/>} />
         <Route path="mood" element={<MoodForm />} />
       </Route>
     )
