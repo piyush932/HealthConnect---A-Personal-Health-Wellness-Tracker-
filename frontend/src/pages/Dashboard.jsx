@@ -1,10 +1,10 @@
 import React from 'react';
-import UserProfileCard from '../components/UserProfileCard';
-import GoalsProgress from '../components/GoalsProgress';
-import DoughnutChart from '../components/PiChart';
-import WaterIntakeChart from '../components/WaterIntakeChart';
-import SleepTrackerChart from '../components/SleepTrackerChart';
-import MoodChart from '../components/MoodChart';
+import UserProfileCard from '../components/Dashboard/UserProfileCard';
+import GoalsProgress from '../components/Dashboard/GoalsProgress';
+import DoughnutChart from '../components/Dashboard/PiChart';
+import WaterIntakeChart from '../components/Dashboard/WaterIntakeChart';
+import SleepTrackerChart from '../components/Dashboard/SleepTrackerChart';
+import MoodChart from '../components/Dashboard/MoodChart';
 
 export default function Dashboard() {
   const [profile, setProfile] = React.useState({
