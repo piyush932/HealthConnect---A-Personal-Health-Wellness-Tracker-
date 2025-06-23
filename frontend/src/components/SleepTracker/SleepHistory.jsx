@@ -65,8 +65,8 @@ function SleepHistory() {
 
   const calculateSleepHours = (start, end) => {
     if (!start || !end) return 0;
-    const [sh, sm] = start.split(":").map(Number);
-    const [eh, em] = end.split(":").map(Number);
+    const [sh, sm, ss] = start.split(":").map(Number);
+    const [eh, em, es] = end.split(":").map(Number);
     let startMins = sh * 60 + sm;
     let endMins = eh * 60 + em;
     let diff = endMins - startMins;
@@ -76,10 +76,14 @@ function SleepHistory() {
 
   const handleSave = async (id) => {
     const updatedSleepHours = calculateSleepHours(
-      editData.startTime,
-      editData.endTime
+      editData.sleepStartTime,
+      editData.sleepEndTime
     );
-    const updatedEntry = { ...editData, sleepHours: updatedSleepHours };
+
+    const updatedEntry = {
+      ...editData,
+      sleepHours: updatedSleepHours,
+    };
 
     try {
       await axios.put(`http://localhost:8080/sleep/${id}`, updatedEntry, {
@@ -119,12 +123,7 @@ function SleepHistory() {
 
   return (
     <div className="bg-white p-4 sm:p-6 mt-8 rounded-lg shadow-md max-w-7xl mx-auto">
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar
-        transition={Slide}
-      />
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar transition={Slide} />
 
       {/* Notes Modal */}
       {showNotesModal && (
@@ -229,37 +228,40 @@ function SleepHistory() {
                         {editId === s.id ? (
                           <input
                             type="time"
-                            value={editData.startTime}
+                            value={editData.sleepStartTime}
                             onChange={(e) =>
-                              handleChange("startTime", e.target.value)
+                              handleChange("sleepStartTime", e.target.value)
                             }
                             className="border px-2 py-1 rounded-md"
                           />
                         ) : (
-                          s.startTime
+                          s.sleepStartTime
                         )}
                       </td>
                       <td className="py-2 px-4">
                         {editId === s.id ? (
                           <input
                             type="time"
-                            value={editData.endTime}
+                            value={editData.sleepEndTime}
                             onChange={(e) =>
-                              handleChange("endTime", e.target.value)
+                              handleChange("sleepEndTime", e.target.value)
                             }
                             className="border px-2 py-1 rounded-md"
                           />
                         ) : (
-                          s.endTime
+                          s.sleepEndTime
                         )}
                       </td>
                       <td className="py-2 px-4">
                         {editId === s.id
                           ? `${calculateSleepHours(
-                              editData.startTime,
-                              editData.endTime
+                              editData.sleepStartTime,
+                              editData.sleepEndTime
                             )} hrs`
-                          : `${s.sleepHours} hrs`}
+                          : `${calculateSleepHours(
+                              s.sleepStartTime,
+                              s.sleepEndTime
+                            )} hrs`}
                       </td>
                       <td className="py-2 px-4">
                         {editId === s.id ? (
