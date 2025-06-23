@@ -8,23 +8,34 @@ import 'react-toastify/dist/ReactToastify.css';
 function SleepForm() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
+
+
   const onSubmit = async (data) => {
-    try {
-      const token = localStorage.getItem('token');
+  try {
+    const token = localStorage.getItem('token');
 
-      await axios.post('http://localhost:8080/sleep', data, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+    const payload = {
+      sleepDate: data.sleepDate,
+      sleepStartTime: data.startTime,
+      sleepEndTime: data.endTime,
+      qualityRating: data.qualityRating,
+      notes: data.notes
+    };
 
-      toast.success('Sleep entry added successfully!');
-      reset();
-    } catch (error) {
-      console.error('Error adding sleep entry:', error);
-      toast.error(error.response?.data?.message || 'Failed to add sleep entry.');
-    }
-  };
+    await axios.post('http://localhost:8080/sleep', payload, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    toast.success('Sleep entry added successfully!');
+    reset();
+  } catch (error) {
+    console.error('Error adding sleep entry:', error);
+    toast.error(error.response?.data?.message || 'Failed to add sleep entry.');
+  }
+};
+
 
   return (
     <div className="w-full max-w-6xl mt-10 mx-auto bg-white p-6 rounded-lg shadow-xl overflow-hidden">
