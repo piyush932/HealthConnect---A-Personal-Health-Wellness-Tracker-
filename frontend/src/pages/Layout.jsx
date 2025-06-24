@@ -18,7 +18,10 @@ function Layout() {
     "/history",
     "/sleep",
     "/sleepHistory",
-    "/mood"
+    "/mood",
+    "/moodHistory",
+    "/water",
+    "/waterHistory"
   ];
 
   useEffect(() => {
