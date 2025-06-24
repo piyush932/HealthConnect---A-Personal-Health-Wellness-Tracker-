@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Dumbbell,
+   Dumbbell,
   Home,
   BarChart2,
   Clock,
@@ -9,6 +9,8 @@ import {
   BedDouble,
   BookText,
   HeartPulse,
+  Droplets,
+  History,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
@@ -16,12 +18,12 @@ import { BiLogOut } from "react-icons/bi";
 const links = [
   { name: "Dashboard", path: "/dashboard", icon: <Home className="h-5 w-5" /> },
   { name: "Profile", path: "/userprofile", icon: <User className="h-5 w-5" /> },
-  { name: "Workout", path: "/workout", icon: <Dumbbell className="h-5 w-5" /> },
   {
     name: "Progress",
     path: "/progress",
     icon: <BarChart2 className="h-5 w-5" />,
   },
+  { name: "Activity Tracker", path: "/workout", icon: <Dumbbell className="h-5 w-5" /> },
   { name: "Activity History", path: "/history", icon: <BookText className="h-5 w-5" /> },
   {
     name: "Sleep Tracker",
@@ -33,7 +35,10 @@ const links = [
     path: "/sleepHistory",
     icon: <Clock className="h-5 w-5" />,
   },
+  { name: "Water Intake", path: "/water", icon: <Droplets className="h-5 w-5" /> },
+  { name: "Water History", path: "/waterHistory", icon: <History className="h-5 w-5" /> },
   { name: "Mood Tracker", path: "/mood", icon: <Smile className="h-5 w-5" /> },
+  { name: "Mood History", path: "/moodHistory", icon: <HeartPulse className="h-5 w-5" /> },
 ];
 
 function SideBar() {

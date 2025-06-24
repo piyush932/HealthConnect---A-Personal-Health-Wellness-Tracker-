@@ -16,8 +16,11 @@ import Progress from "./pages/Progress";
 import History from "./pages/History";
 import Dashboard from './pages/Dashboard';
 import SleepForm from "./components/SleepTracker/SleepForm";
-import MoodForm from "./components/MoodForm";
+import MoodForm from "./components/Mood/MoodForm";
 import SleepHistory from "./components/SleepTracker/SleepHistory";
+import MoodHistory from "./components/Mood/MoodHistory";
+import WaterIntakeForm from "./components/Water/WaterIntakeForm";
+import WaterHistory from "./components/Water/WaterHistory";
 
 function App() {
   const router = createBrowserRouter(
@@ -34,6 +37,10 @@ function App() {
         <Route path="sleep" element={<SleepForm />} />
         <Route path="sleepHistory" element={<SleepHistory/>} />
         <Route path="mood" element={<MoodForm />} />
+        <Route path="moodHistory" element={<MoodHistory />} />
+        <Route path="water" element={<WaterIntakeForm />} />
+        <Route path="waterHistory" element={<WaterHistory />} />
+        
       </Route>
     )
   );

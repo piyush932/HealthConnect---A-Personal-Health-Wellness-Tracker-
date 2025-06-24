@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import Input from "./Input";
+import Input from "../Input";
 import { Dumbbell } from "lucide-react";
 import axios from "axios";
 import { toast, ToastContainer, Slide } from "react-toastify";
