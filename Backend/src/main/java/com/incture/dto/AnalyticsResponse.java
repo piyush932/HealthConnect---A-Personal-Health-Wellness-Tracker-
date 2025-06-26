@@ -24,10 +24,10 @@ public class AnalyticsResponse {
 
     public static class SleepSummary {
         public LocalDate date;
-        public double sleepHours;
-        public int qualityRating;
+        public Double sleepHours;      // changed from double
+        public Integer qualityRating;  // changed from int
 
-        public SleepSummary(LocalDate date, double sleepHours, int qualityRating) {
+        public SleepSummary(LocalDate date, Double sleepHours, Integer qualityRating) {
             this.date = date;
             this.sleepHours = sleepHours;
             this.qualityRating = qualityRating;
@@ -37,14 +37,15 @@ public class AnalyticsResponse {
             return date;
         }
 
-        public double getSleepHours() {
+        public Double getSleepHours() {
             return sleepHours;
         }
 
-        public int getQualityRating() {
+        public Integer getQualityRating() {
             return qualityRating;
         }
     }
+
 
     public static class MoodStats {
         public LocalDate entryDate;

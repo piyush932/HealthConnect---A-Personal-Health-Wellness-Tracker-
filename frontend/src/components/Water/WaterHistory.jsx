@@ -35,7 +35,7 @@ function WaterHistory() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:8080/water-intake/byDate?date=${filterDate}`, {
+      const res = await axios.get(`http://localhost:8080/water/byDate?date=${filterDate}`, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ function WaterHistory() {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/water-intake/${id}`, {
+      await axios.delete(`http://localhost:8080/water/${id}`, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json'
@@ -76,13 +76,13 @@ function WaterHistory() {
   };
 
   const handleChange = (value) => {
-    setEditData((prev) => ({ ...prev, amountLiters: parseFloat(value) }));
+    setEditData((prev) => ({ ...prev, amountInLiters: parseFloat(value) }));
   };
 
   const handleSave = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:8080/water-intake/${id}`, editData, {
+      await axios.put(`http://localhost:8080/water/${id}`, editData, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json'
@@ -172,12 +172,12 @@ function WaterHistory() {
                           <input
                             type="number"
                             step="0.1"
-                            value={editData.amountLiters}
+                            value={editData.amountInLiters}
                             onChange={(e) => handleChange(e.target.value)}
                             className="border px-2 py-1 rounded-md"
                           />
                         ) : (
-                          `${r.amountLiters} L`
+                          `${r.amountInLiters} L`
                         )}
                       </td>
                       <td className="py-2 px-4 space-x-2">
