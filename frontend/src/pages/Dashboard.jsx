@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
 import UserProfileCard from '../components/Dashboard/UserProfileCard';
 import GoalsProgress from '../components/Dashboard/GoalsProgress';
 import DoughnutChart from '../components/Dashboard/PiChart';
@@ -7,23 +9,36 @@ import SleepTrackerChart from '../components/Dashboard/SleepTrackerChart';
 import MoodChart from '../components/Dashboard/MoodChart';
 
 export default function Dashboard() {
-  const [profile, setProfile] = React.useState({
-    name: 'John Doe',
-    age: '25',
-    weight: '70kg',
-    hight: '175cm',
-    fitnessGoals: 'Build muscle and stay healthy',
-  });
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] = React.useState(true);
+  const API_URL = 'http://localhost:8080/user/me';
 
-  // Simulate loading
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 1500); // Shorter load for dev
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('Token not found. Please log in.');
+          setLoading(false);
+          return;
+        }
 
-    return () => clearTimeout(timeout);
+        const response = await axios.get(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setProfile(response.data);
+      } catch (error) {
+        console.error('Failed to fetch profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   return (
@@ -40,24 +55,25 @@ export default function Dashboard() {
               <>
                 {/* Profile + Goals */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  <UserProfileCard
-                    name={profile.name}
-                    age={profile.age}
-                    weight={profile.weight}
-                    height={profile.hight}
-                    fitnessGoals={profile.fitnessGoals}
-                  />
+                  {profile && (
+                    <UserProfileCard
+                      name={profile.name}
+                      age={profile.age}
+                      weight={profile.weight}
+                      height={profile.height}
+                    />
+                  )}
                   <GoalsProgress tittle="Daily Goals" />
                   <GoalsProgress tittle="Weekly Goals" />
                 </div>
 
-                <div className= {loading ? ('hidden'):(" ")}>
-                <WaterIntakeChart/>
-                <SleepTrackerChart/>
-                <MoodChart/>
+                {/* Charts */}
+                <div>
+                  <WaterIntakeChart />
+                  <SleepTrackerChart />
+                  <MoodChart />
                 </div>
 
-                {/* Charts and Suggestions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   <DoughnutChart />
                 </div>
