@@ -69,7 +69,7 @@ function SleepChart({ width = '', marginTop = '', marginLR = '' }) {
       const hoursMap = {};
       const qualityMapByDate = {};
       responseData.forEach(entry => {
-        const date = moment(entry.sleepDate).format('D MMM');
+        const date = moment(entry.date).format('D MMM');
         hoursMap[date] = entry.sleepHours;
         qualityMapByDate[date] = entry.qualityRating;
       });
