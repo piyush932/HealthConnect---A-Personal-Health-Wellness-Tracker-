@@ -80,6 +80,11 @@ function SleepHistory() {
       editData.sleepEndTime
     );
 
+    if (updatedSleepHours <= 0) {
+    toast.error("Sleep hours must be greater than 0. Please check start and end time.");
+    return;
+  }
+
     const updatedEntry = {
       ...editData,
       sleepHours: updatedSleepHours,

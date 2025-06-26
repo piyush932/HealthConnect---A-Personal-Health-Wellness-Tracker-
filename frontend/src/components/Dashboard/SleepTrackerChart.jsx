@@ -59,7 +59,7 @@ function SleepChart({ width = '', marginTop = '', marginLR = '' }) {
         }
       });
 
-      const responseData = res.data; // [{ sleepDate, sleepHours, qualityRating }]
+      const responseData = res.data; 
 
       const daysInMonth = moment(queryMonth, 'YYYY-MM').daysInMonth();
       const labels = Array.from({ length: daysInMonth }, (_, i) =>
@@ -77,6 +77,9 @@ function SleepChart({ width = '', marginTop = '', marginLR = '' }) {
       const data = labels.map(label => hoursMap[label] || 0);
       const qualityData = labels.map(label => qualityMapByDate[label] || null);
 
+      const maxSleep = Math.max(...data, 8); 
+      const suggestedMax = Math.ceil(maxSleep * 1.1); 
+
       setChartData({
         labels,
         datasets: [
@@ -86,7 +89,8 @@ function SleepChart({ width = '', marginTop = '', marginLR = '' }) {
             backgroundColor: '#34d399'
           }
         ],
-        meta: qualityData
+        meta: qualityData,
+        suggestedMax
       });
     } catch (err) {
       console.error('Error fetching sleep data:', err);
@@ -145,6 +149,7 @@ function SleepChart({ width = '', marginTop = '', marginLR = '' }) {
               scales: {
                 y: {
                   beginAtZero: true,
+                  suggestedMax: chartData.suggestedMax,
                   title: {
                     display: true,
                     text: 'Sleep Hours'

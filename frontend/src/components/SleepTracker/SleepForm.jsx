@@ -10,6 +10,21 @@ function SleepForm() {
 
   const onSubmit = async (data) => {
     try {
+       const [sh, sm] = data.startTime.split(":").map(Number);
+    const [eh, em] = data.endTime.split(":").map(Number);
+
+    let startMins = sh * 60 + sm;
+    let endMins = eh * 60 + em;
+    let diff = endMins - startMins;
+    if (diff < 0) diff += 24 * 60; // Adjust for overnight sleep
+
+    const sleepHours = parseFloat((diff / 60).toFixed(1));
+
+    // 🛑 Validation check
+    if (sleepHours <= 0) {
+      toast.error("Sleep hours must be greater than 0. Please check the time inputs.");
+      return;
+    }
       const token = localStorage.getItem('token');
 
       const payload = {
