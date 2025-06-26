@@ -6,7 +6,6 @@ export default function UserProfile({
   age,
   weight,
   height,
-  fitnessGoals,
 }) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -29,10 +28,6 @@ export default function UserProfile({
         <div>
           <p className="text-3xl font-bold text-indigo-600">{height}</p>
           <p className="text-gray-600">Height (cm)</p>
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-indigo-600">{fitnessGoals}</p>
-          <p className="text-gray-600">Fitness Goals</p>
         </div>
       </div>
     </div>
