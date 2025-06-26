@@ -17,6 +17,8 @@ public class SleepRecord {
     private LocalTime sleepStartTime;
     private LocalTime sleepEndTime;
 
+    private double sleepHours; // ✅ NEW FIELD
+
     private int qualityRating;  // rating 1-10
 
     private String notes;
@@ -57,6 +59,14 @@ public class SleepRecord {
 
     public void setSleepEndTime(LocalTime sleepEndTime) {
         this.sleepEndTime = sleepEndTime;
+    }
+
+    public double getSleepHours() {
+        return sleepHours;
+    }
+
+    public void setSleepHours(double sleepHours) {
+        this.sleepHours = sleepHours;
     }
 
     public int getQualityRating() {
