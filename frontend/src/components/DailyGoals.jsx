@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Flame, Footprints, Clock } from "lucide-react";
+import { Flame, Footprints, Clock, CalendarDays } from "lucide-react";
+import axios from "axios";
 
 function DailyGoals({
   title = "Daily Goals",
@@ -27,6 +28,7 @@ function DailyGoals({
       targetSteps: defaultTotalSteps,
       spendWorkoutTime: defaultSpendWorkout,
       outOfWorkoutTime: defaultWorkoutTime,
+      date: new Date().toISOString().slice(0, 10), // Set today's date
     },
   });
 
@@ -37,12 +39,10 @@ function DailyGoals({
   const spendWorkoutTime = watch("spendWorkoutTime");
   const outOfWorkoutTime = watch("outOfWorkoutTime");
 
-  // Progress calculations
   const caloriesProgress = Math.min((caloriesBurned / outOfCaloriesBurned) * 100, 100);
   const stepsProgress = Math.min((stepsTaken / targetSteps) * 100, 100);
   const workoutProgress = outOfWorkoutTime > 0 ? Math.min((spendWorkoutTime / outOfWorkoutTime) * 100, 100) : 0;
 
-  // Validation logic
   useEffect(() => {
     if (targetSteps < stepsTaken) {
       setError("stepsTaken", {
@@ -79,30 +79,41 @@ function DailyGoals({
     clearErrors,
   ]);
 
-  // Submit handler: only logs data if valid
-  const onSubmit = (data) => {
-    if (data.stepsTaken > data.targetSteps) {
-      setValue("stepsTaken", data.targetSteps);
-      alert("Steps taken cannot exceed target steps. Adjusting value.");
-      return;
+  const onSubmit = async (data) => {
+    try {
+      console.log("Sending data:", data);
+      await axios.post("http://localhost:8080/progress", data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      alert("Progress submitted successfully!");
+    } catch (error) {
+      console.error("Failed to submit progress:", error);
+      alert("Failed to submit progress.");
     }
-    if (data.caloriesBurned > data.outOfCaloriesBurned) {
-      setValue("caloriesBurned", data.outOfCaloriesBurned);
-      alert("Calories burned cannot exceed out of calories burned. Adjusting value.");
-      return;
-    }
-    if (data.spendWorkoutTime > data.outOfWorkoutTime) {
-      setValue("spendWorkoutTime", data.outOfWorkoutTime);
-      alert("Workout time cannot exceed out of workout time. Adjusting value.");
-      return;
-    }
-    console.log(data);
   };
 
   return (
     <div className="w-full max-w-6xl mt-10 mx-auto bg-white p-6 rounded-lg shadow-xl overflow-hidden">
       <h2 className="text-2xl font-bold text-blue-600 mb-6">{title}</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {/* Date Input */}
+        <div>
+          <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <CalendarDays className="inline-block mr-2 h-5 w-5 text-blue-500" />
+            Date:
+          </label>
+          <input
+            type="date"
+            id="date"
+            {...register("date", { required: "Date is required" })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
+        </div>
+
         {/* Calories Burned Input */}
         <div>
           <label htmlFor="caloriesBurned" className="block text-sm font-medium text-gray-700 mb-1">
@@ -119,26 +130,23 @@ function DailyGoals({
             })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {errors.caloriesBurned && (
-            <p className="mt-1 text-sm text-red-500">{errors.caloriesBurned.message}</p>
-          )}
+          {errors.caloriesBurned && <p className="text-sm text-red-500">{errors.caloriesBurned.message}</p>}
         </div>
 
-        {/* Out of Calories Burned Input */}
+        {/* Out of Calories */}
         <div>
           <label htmlFor="outOfCaloriesBurned" className="block text-sm font-medium text-gray-700 mb-1">
-            <Flame className="inline-block mr-2 h-5 w-5 text-blue-500" />
             Out of Calories Burned:
           </label>
           <input
             type="number"
             id="outOfCaloriesBurned"
             {...register("outOfCaloriesBurned", {
-              required: "Out of Calories burned is required",
-              min: { value: 0, message: "Out of Calories must be a positive number" },
+              required: true,
+              min: { value: 1, message: "Must be greater than 0" },
               valueAsNumber: true,
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
           />
         </div>
 
@@ -146,142 +154,100 @@ function DailyGoals({
         <div className="mt-2">
           <div className="text-sm font-medium text-gray-700 mb-1">Calories Progress:</div>
           <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-blue-600 h-2.5 rounded-full"
-              style={{
-                width: `${caloriesProgress}%`,
-                transition: "width 0.5s ease-in-out",
-              }}
-            ></div>
+            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${caloriesProgress}%` }}></div>
           </div>
-          <div className="text-sm text-gray-600 mt-1">
-            {caloriesBurned}/{outOfCaloriesBurned} kcals
-          </div>
+          <div className="text-sm text-gray-600 mt-1">{caloriesBurned}/{outOfCaloriesBurned} kcals</div>
         </div>
 
-        {/* Steps Taken Input */}
+        {/* Steps Taken */}
         <div>
           <label htmlFor="stepsTaken" className="block text-sm font-medium text-gray-700 mb-1">
-            <Footprints className="inline-block mr-2 h-5 w-5 text-blue-500" />
             Steps Taken:
           </label>
           <input
             type="number"
             id="stepsTaken"
             {...register("stepsTaken", {
-              required: "Steps Taken is required",
-              min: { value: 0, message: "Steps must be a positive number" },
+              required: true,
+              min: { value: 0, message: "Steps must be positive" },
               valueAsNumber: true,
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
-          {errors.stepsTaken && (
-            <p className="mt-1 text-sm text-red-500">{errors.stepsTaken.message}</p>
-          )}
         </div>
 
-        {/* Steps Target Input */}
+        {/* Steps Target */}
         <div>
           <label htmlFor="targetSteps" className="block text-sm font-medium text-gray-700 mb-1">
-            <Footprints className="inline-block mr-2 h-5 w-5 text-blue-500" />
-            Steps Target:
+            Target Steps:
           </label>
           <input
             type="number"
             id="targetSteps"
             {...register("targetSteps", {
-              required: "Steps target is required",
-              min: { value: 1, message: "Steps target must be a positive number" },
+              required: true,
+              min: { value: 1, message: "Target must be greater than 0" },
               valueAsNumber: true,
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
-          {errors.targetSteps && (
-            <p className="mt-1 text-sm text-red-500">{errors.targetSteps.message}</p>
-          )}
         </div>
 
-        {/* Steps Progress Bar */}
+        {/* Steps Progress */}
         <div className="mt-2">
           <div className="text-sm font-medium text-gray-700 mb-1">Steps Progress:</div>
           <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-blue-600 h-2.5 rounded-full"
-              style={{
-                width: `${stepsProgress}%`,
-                transition: "width 0.5s ease-in-out",
-              }}
-            ></div>
+            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${stepsProgress}%` }}></div>
           </div>
-          <div className="text-sm text-gray-600 mt-1">
-            {stepsTaken}/{targetSteps}
-          </div>
+          <div className="text-sm text-gray-600 mt-1">{stepsTaken}/{targetSteps}</div>
         </div>
 
-        {/* Spend Workout Time Input */}
+        {/* Workout Time */}
         <div>
           <label htmlFor="spendWorkoutTime" className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock className="inline-block mr-2 h-5 w-5 text-blue-500" />
-            Spend Workout Time (minutes):
+            Spend Workout Time (min):
           </label>
           <input
             type="number"
             id="spendWorkoutTime"
             {...register("spendWorkoutTime", {
-              required: "Workout time is required",
-              min: { value: 0, message: "Workout time must be a positive number" },
+              required: true,
+              min: { value: 0, message: "Time must be positive" },
               valueAsNumber: true,
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
-          {errors.spendWorkoutTime && (
-            <p className="mt-1 text-sm text-red-500">{errors.spendWorkoutTime.message}</p>
-          )}
         </div>
 
-        {/* Out of Workout Time Input */}
         <div>
           <label htmlFor="outOfWorkoutTime" className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock className="inline-block mr-2 h-5 w-5 text-blue-500" />
-            Out of Workout Time (minutes):
+            Out of Workout Time (min):
           </label>
           <input
             type="number"
             id="outOfWorkoutTime"
             {...register("outOfWorkoutTime", {
-              required: "Total workout time is required",
-              min: { value: 0, message: "Workout time must be a positive number" },
+              required: true,
+              min: { value: 1, message: "Must be greater than 0" },
               valueAsNumber: true,
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
-          {errors.outOfWorkoutTime && (
-            <p className="mt-1 text-sm text-red-500">{errors.outOfWorkoutTime.message}</p>
-          )}
         </div>
 
-        {/* Workout Time Progress Bar */}
+        {/* Workout Progress */}
         <div className="mt-2">
           <div className="text-sm font-medium text-gray-700 mb-1">Workout Time Progress:</div>
           <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-blue-600 h-2.5 rounded-full"
-              style={{
-                width: `${workoutProgress}%`,
-                transition: "width 0.5s ease-in-out",
-              }}
-            ></div>
+            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${workoutProgress}%` }}></div>
           </div>
-          <div className="text-sm text-gray-600 mt-1">
-            {spendWorkoutTime}/{outOfWorkoutTime} minutes
-          </div>
+          <div className="text-sm text-gray-600 mt-1">{spendWorkoutTime}/{outOfWorkoutTime} min</div>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end pt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 focus:outline-none"
           >
             Add Progress
           </button>

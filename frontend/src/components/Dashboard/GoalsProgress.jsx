@@ -1,36 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Target, Footprints, Clock } from 'lucide-react';
+import axios from 'axios';
 
 export default function GoalsProgress({ tittle = "n/a" }) {
   const [dailyData, setDailyData] = useState(null);
   const [weeklyData, setWeeklyData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Simulate fetching dummy data
   useEffect(() => {
-    const dummyDaily = {
-      caloriesBurned: 320,
-      outOfCaloriesBurned: 500,
-      stepsTaken: 4500,
-      targetSteps: 8000,
-      spendWorkoutTimeMinutes: 30,
-      outOfWorkoutTimeMinutes: 60,
-    };
+    const fetchProgress = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/progress?type=${tittle === 'Weekly Goals' ? 'weekly' : 'daily'}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
-    const dummyWeekly = {
-      caloriesBurned: 2150,
-      stepsTaken: 32000,
-      spendWorkoutTimeMinutes: 180,
-    };
-
-    // Simulate async load
-    setTimeout(() => {
-      setDailyData(dummyDaily);
-      if (tittle === 'Weekly Goals') {
-        setWeeklyData(dummyWeekly);
+        if (tittle === 'Weekly Goals') {
+          setWeeklyData(response.data.weekly);
+          setDailyData(response.data.daily); // For target comparison
+        } else {
+          setDailyData(response.data.daily); // ✅ FIX: use .daily
+        }
+      } catch (error) {
+        console.error("Failed to fetch progress data:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    }, 1000);
+    };
+
+    fetchProgress();
   }, [tittle]);
 
   if (loading) {
@@ -46,20 +49,20 @@ export default function GoalsProgress({ tittle = "n/a" }) {
             <GoalItem
               label="Calories Burned"
               icon={<Target className="w-5 h-5 text-indigo-600 mr-2" />}
-              progress={dailyData.caloriesBurned}
-              target={dailyData.outOfCaloriesBurned}
+              progress={dailyData.caloriesBurned ?? 0}
+              target={dailyData.outOfCaloriesBurned ?? 1}
             />
             <GoalItem
               label="Steps Taken"
               icon={<Footprints className="w-5 h-5 text-indigo-600 mr-2" />}
-              progress={dailyData.stepsTaken}
-              target={dailyData.targetSteps}
+              progress={dailyData.stepsTaken ?? 0}
+              target={dailyData.targetSteps ?? 1}
             />
             <GoalItem
               label="Workout Time"
               icon={<Clock className="w-5 h-5 text-indigo-600 mr-2" />}
-              progress={dailyData.spendWorkoutTimeMinutes}
-              target={dailyData.outOfWorkoutTimeMinutes}
+              progress={dailyData.spendWorkoutTime ?? 0}
+              target={dailyData.outOfWorkoutTime ?? 1}
             />
           </>
         )}
@@ -69,20 +72,20 @@ export default function GoalsProgress({ tittle = "n/a" }) {
             <GoalItem
               label="Calories Burned"
               icon={<Target className="w-5 h-5 text-indigo-600 mr-2" />}
-              progress={weeklyData.caloriesBurned}
-              target={dailyData.outOfCaloriesBurned * 7}
+              progress={weeklyData.caloriesBurned ?? 0}
+              target={(dailyData.outOfCaloriesBurned ?? 1) * 7}
             />
             <GoalItem
               label="Steps Taken"
               icon={<Footprints className="w-5 h-5 text-indigo-600 mr-2" />}
-              progress={weeklyData.stepsTaken}
-              target={dailyData.targetSteps * 7}
+              progress={weeklyData.stepsTaken ?? 0}
+              target={(dailyData.targetSteps ?? 1) * 7}
             />
             <GoalItem
               label="Workout Time"
               icon={<Clock className="w-5 h-5 text-indigo-600 mr-2" />}
-              progress={weeklyData.spendWorkoutTimeMinutes}
-              target={dailyData.outOfWorkoutTimeMinutes * 7}
+              progress={weeklyData.spendWorkoutTime ?? weeklyData.spendWorkoutTimeMinutes ?? 0}
+              target={(dailyData.outOfWorkoutTime ?? 1) * 7}
             />
           </>
         )}
@@ -91,7 +94,7 @@ export default function GoalsProgress({ tittle = "n/a" }) {
   );
 }
 
-// Progress bar for each goal
+// Goal item component
 function GoalItem({ label, icon, progress, target }) {
   const percentage = target ? Math.min((progress / target) * 100, 100) : 0;
 
@@ -101,9 +104,7 @@ function GoalItem({ label, icon, progress, target }) {
       <div className="flex-1">
         <div className="flex justify-between text-sm mb-1">
           <span className="font-medium text-gray-700">{label}</span>
-          <span className="text-gray-600">
-            {progress}/{target}
-          </span>
+          <span className="text-gray-600">{progress}/{target}</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
