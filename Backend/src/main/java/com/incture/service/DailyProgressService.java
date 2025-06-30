@@ -51,9 +51,10 @@ public class DailyProgressService {
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                 new RuntimeException("User not found with email: " + email));
 
-        return progressRepository.findByUserAndDate(user, date)
-                .orElseThrow(() -> new RuntimeException("No progress found for today"));
+        // return null if progress not found
+        return progressRepository.findByUserAndDate(user, date).orElse(null);
     }
+
 
     public WeeklyProgressResponse getWeeklyProgressSummary(String email, LocalDate start, LocalDate end) {
         User user = userRepository.findByEmail(email).orElseThrow(() ->
