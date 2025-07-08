@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import SideBar from "../components/Sidebar/Sidebar";
+import ReminderToast from "../components/ReminderToast";
 
 function Layout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -50,6 +51,13 @@ function Layout() {
   const handleLoginToggle = () => {
     if (isAuthenticated) {
       localStorage.removeItem("token");
+
+      Object.keys(sessionStorage).forEach((key) => {
+      if (key.startsWith("reminder-")) {
+        sessionStorage.removeItem(key);
+      }
+    });
+    
       window.dispatchEvent(new Event("authChanged"));
       setIsAuthenticated(false);
       navigate("/");
@@ -84,6 +92,8 @@ function Layout() {
       <main className="flex-1 p-4 bg-gray-100">
         <Outlet />
       </main>
+
+      {isAuthenticated && protectedRoutes.includes(location.pathname) && <ReminderToast />}
 
       <Footer />
     </div>
