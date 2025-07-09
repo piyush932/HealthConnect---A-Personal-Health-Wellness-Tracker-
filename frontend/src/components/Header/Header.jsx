@@ -33,7 +33,7 @@ const Header = ({ isAuthenticated, handleLoginToggle }) => {
     try {
       const response = await fetch('http://localhost:8080/export/all', {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
 
