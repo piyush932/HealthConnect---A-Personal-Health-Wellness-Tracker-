@@ -1,9 +1,10 @@
 package com.incture.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "users") 
+@Table(name = "users")
 public class User {
 
     @Id
@@ -19,12 +20,28 @@ public class User {
     private String password;
 
     private int age;
-
     private double height;
-
     private double weight;
 
-    // Default constructor
+    // === One-to-Many Relationships ===
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DailyActivity> dailyActivities;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SleepRecord> sleepRecords;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MoodEntry> moodEntries;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WaterIntake> waterIntakes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DailyProgress> dailyProgresses;
+
+    // === Constructors ===
+
     public User() {}
 
     public User(String name, String email, String password, int age, double height, double weight) {
@@ -36,74 +53,64 @@ public class User {
         this.weight = weight;
     }
 
-    // Getters and Setters
+    // === Getters and Setters ===
 
-    public Long getId() {
-        return id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+
+    public double getHeight() { return height; }
+    public void setHeight(double height) { this.height = height; }
+
+    public double getWeight() { return weight; }
+    public void setWeight(double weight) { this.weight = weight; }
+
+    public List<DailyActivity> getDailyActivities() { return dailyActivities; }
+    public void setDailyActivities(List<DailyActivity> dailyActivities) {
+        this.dailyActivities = dailyActivities;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public List<SleepRecord> getSleepRecords() { return sleepRecords; }
+    public void setSleepRecords(List<SleepRecord> sleepRecords) {
+        this.sleepRecords = sleepRecords;
     }
 
-    public String getName() {
-        return name;
+    public List<MoodEntry> getMoodEntries() { return moodEntries; }
+    public void setMoodEntries(List<MoodEntry> moodEntries) {
+        this.moodEntries = moodEntries;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public List<WaterIntake> getWaterIntakes() { return waterIntakes; }
+    public void setWaterIntakes(List<WaterIntake> waterIntakes) {
+        this.waterIntakes = waterIntakes;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public List<DailyProgress> getDailyProgresses() { return dailyProgresses; }
+    public void setDailyProgresses(List<DailyProgress> dailyProgresses) {
+        this.dailyProgresses = dailyProgresses;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", age=" + age +
-                ", height=" + height +
-                ", weight=" + weight +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", email='" + email + '\'' +
+               ", password='" + password + '\'' +
+               ", age=" + age +
+               ", height=" + height +
+               ", weight=" + weight +
+               '}';
     }
 }
