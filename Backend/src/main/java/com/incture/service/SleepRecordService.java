@@ -81,16 +81,35 @@ public class SleepRecordService {
 
     // Method to calculate sleep hours, handling cross-midnight
     private double calculateSleepHours(LocalTime start, LocalTime end) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Sleep start and end time must not be null");
+        }
+
         Duration duration;
-        if (end.isBefore(start) || end.equals(start)) {
-            // Crosses midnight or exactly 24h
-            duration = Duration.between(start, LocalTime.MIDNIGHT)
-                       .plus(Duration.between(LocalTime.MIN, end));
+
+        if (end.equals(start)) {
+            return 0.0;
+        } else if (end.isBefore(start)) {
+            // Crosses midnight, e.g. 23:00 to 05:00
+            duration = Duration.between(start, LocalTime.of(23, 59, 59))
+                    .plusSeconds(1)  // To complete the full 24h
+                    .plus(Duration.between(LocalTime.MIN, end));
         } else {
             duration = Duration.between(start, end);
         }
-        return duration.toMinutes() / 60.0;
+
+        double hours = duration.toMinutes() / 60.0;
+        hours = Math.round(hours * 100.0) / 100.0;
+
+        // Only reject truly invalid values
+        if (hours < 0 || hours > 16) {
+            throw new IllegalArgumentException("Invalid sleep duration: " + hours + " hours. Must be between 0 and 16.");
+        }
+
+        return hours;
     }
+
+
 
 
 }
