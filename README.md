@@ -396,6 +396,8 @@ You can test the HealthConnect project using the following tools and frameworks:
 | &nbsp; |
 | ![Screenshot 2](https://github.com/piyush932/HealthConnect---A-Personal-Health-Wellness-Tracker-/blob/main/frontend/Screenshots/Water%20intake%20graph.png)     | 
 | &nbsp; |
+| ![Screenshot 3](https://github.com/piyush932/HealthConnect---A-Personal-Health-Wellness-Tracker-/blob/main/frontend/Screenshots/Sleep_Chart.png)     | 
+| &nbsp; |
 
 ### Stretch Goals:
 ####  Goal Setting
@@ -403,6 +405,8 @@ You can test the HealthConnect project using the following tools and frameworks:
 | --- |
 | &nbsp; |
 | ![Screenshot 2](https://github.com/piyush932/HealthConnect---A-Personal-Health-Wellness-Tracker-/blob/main/frontend/Screenshots/progress%20dashboard.png)     | 
+| &nbsp; |
+| ![Screenshot 3](https://github.com/piyush932/HealthConnect---A-Personal-Health-Wellness-Tracker-/blob/main/frontend/Screenshots/Pie_Chart.png)     | 
 | &nbsp; |
 
 ####  Reminders/Notifications: 
