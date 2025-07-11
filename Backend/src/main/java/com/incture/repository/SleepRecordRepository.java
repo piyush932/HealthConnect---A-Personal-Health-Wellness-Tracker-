@@ -16,14 +16,14 @@ public interface SleepRecordRepository extends JpaRepository<SleepRecord, Long> 
     List<SleepRecord> findByUserAndSleepDate(User user, LocalDate sleepDate);
 
     @Query("SELECT new com.incture.dto.AnalyticsResponse$SleepSummary(" +
-           "s.sleepDate, " +
-           "SUM(CAST(FUNCTION('TIMESTAMPDIFF', MINUTE, s.sleepStartTime, s.sleepEndTime) AS double)) / 60.0, " +
-           "MAX(s.qualityRating)) " +
-           "FROM SleepRecord s " +
-           "WHERE s.user.id = :userId " +
-           "AND FUNCTION('MONTH', s.sleepDate) = :month " +
-           "AND FUNCTION('YEAR', s.sleepDate) = :year " +
-           "GROUP BY s.sleepDate")
+            "s.sleepDate, " +
+            "SUM(s.sleepHours), " +  // ✅ Using pre-calculated sleepHours
+            "MAX(s.qualityRating)) " +
+            "FROM SleepRecord s " +
+            "WHERE s.user.id = :userId " +
+            "AND FUNCTION('MONTH', s.sleepDate) = :month " +
+            "AND FUNCTION('YEAR', s.sleepDate) = :year " +
+            "GROUP BY s.sleepDate")
     List<AnalyticsResponse.SleepSummary> findMonthlySleepSummary(@Param("userId") Long userId,
                                                                  @Param("month") int month,
                                                                  @Param("year") int year);
