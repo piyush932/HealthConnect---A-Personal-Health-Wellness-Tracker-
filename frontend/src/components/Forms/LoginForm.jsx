@@ -35,14 +35,6 @@ export default function LoginForm() {
     }
   };
 
-//     const onSubmit = async (data) => {
-//   // Just navigate directly without auth check
-//   console.log("Form submitted with:", data);
-//   alert("Login successful (dummy)!");
-//   localStorage.setItem("token", "dummy-token"); // optional dummy token
-//   navigate("/dashboard");
-// };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar transition={Slide} />

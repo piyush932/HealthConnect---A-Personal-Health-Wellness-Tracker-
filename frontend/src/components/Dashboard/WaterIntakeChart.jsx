@@ -18,7 +18,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 function WaterIntakeChart({ width = '', marginTop = '', marginLR = '' }) {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState('June');
+  const currentMonthName = new Date().toLocaleString('default', { month: 'long' });
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
+
 
   const monthMap = {
     January: '01',
