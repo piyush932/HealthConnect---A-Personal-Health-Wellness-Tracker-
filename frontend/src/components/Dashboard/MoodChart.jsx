@@ -41,7 +41,8 @@ const monthMap = {
 };
 
 function MoodChart({ width = '', marginTop = '', marginLR = '' }) {
-  const [selectedMonth, setSelectedMonth] = useState('June');
+  const currentMonthName = new Date().toLocaleString('default', { month: 'long' });
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(false);
 
