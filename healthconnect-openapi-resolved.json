@@ -1,0 +1,1719 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "HealthConnect API",
+    "description": "A wellness and health tracking API for logging and analyzing user activities, sleep, mood, hydration, and goals.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register new user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User registered successfully!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email already registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Authenticate user and return JWT token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful with token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Log out current user (JWT based, no backend session invalidation)",
+        "responses": {
+          "200": {
+            "description": "Logged out successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "summary": "Get logged-in user's profile",
+        "responses": {
+          "200": {
+            "description": "User profile retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileUpdate"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update logged-in user's profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/activity": {
+      "get": {
+        "summary": "Retrieve all logged activities for the current user",
+        "responses": {
+          "200": {
+            "description": "Activity list retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DailyActivityResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Log a new physical activity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyActivityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Activity logged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyActivityResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/activity/byDate": {
+      "get": {
+        "summary": "Get activities filtered by date for the current user",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered activities retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DailyActivityResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/activity/{id}": {
+      "get": {
+        "summary": "Get a specific activity entry by ID for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyActivityResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized to view this activity"
+          },
+          "404": {
+            "description": "Activity not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update a specific activity entry for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyActivityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activity updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyActivityResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a specific activity entry for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Activity deleted"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/sleep": {
+      "get": {
+        "summary": "Get sleep history for the current user",
+        "responses": {
+          "200": {
+            "description": "Sleep records retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sleep"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Log a sleep record for the current user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SleepRecordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sleep record logged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sleep"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/sleep/byDate": {
+      "get": {
+        "summary": "Get sleep records filtered by date for the current user",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered sleep records retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sleep"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/sleep/{id}": {
+      "get": {
+        "summary": "Get a specific sleep record by ID for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sleep record retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sleep"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized to view this record"
+          },
+          "404": {
+            "description": "Sleep record not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update a sleep record for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SleepRecordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sleep updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sleep"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete sleep entry for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sleep record deleted"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/water": {
+      "get": {
+        "summary": "Get water logs for the current user",
+        "responses": {
+          "200": {
+            "description": "Water intake history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterIntake"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Log daily water intake for the current user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterIntakeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Water intake logged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterIntake"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/water/byDate": {
+      "get": {
+        "summary": "Get water intake entries filtered by date for the current user",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered water intake entries retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterIntake"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/water/{id}": {
+      "put": {
+        "summary": "Update water log entry for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterIntakeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Water intake updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterIntake"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete water entry for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Water entry deleted"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/mood": {
+      "get": {
+        "summary": "Get mood entries for the current user",
+        "responses": {
+          "200": {
+            "description": "Mood list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Mood"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Log a mood entry for the current user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoodEntryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mood logged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mood"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/mood/byDate": {
+      "get": {
+        "summary": "Get mood entries filtered by date for the current user",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered mood entries retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Mood"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/mood/{id}": {
+      "get": {
+        "summary": "Get a specific mood entry by ID for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mood entry retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mood"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized to view this entry"
+          },
+          "404": {
+            "description": "Mood entry not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Edit a mood entry for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoodEntryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mood updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mood"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete mood entry for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Mood entry deleted"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/progress": {
+      "get": {
+        "summary": "Get user's goal progress (daily/weekly or by date range)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date for progress query (YYYY-MM-DD). Required if 'type' is not provided.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date for progress query (YYYY-MM-DD). Required if 'type' is not provided.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Type of progress summary to retrieve. If 'daily', returns today's progress. If 'weekly', returns a summary for the last 7 days.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "daily",
+                "weekly"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Progress data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_1"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid type or missing date parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Save or update daily progress for the current user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyProgressRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Progress saved successfully.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/goals": {
+      "get": {
+        "summary": "Retrieve all goals for the logged-in user",
+        "responses": {
+          "200": {
+            "description": "List of user's goals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GoalSetting"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Set a new goal for the current user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalSettingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Goal set successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoalSetting"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/goals/{id}": {
+      "get": {
+        "summary": "Get a specific goal by ID for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Goal retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoalSetting"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized to view this goal"
+          },
+          "404": {
+            "description": "Goal not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update an existing goal for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalSettingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Goal updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoalSetting"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a goal for the current user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Goal deleted successfully"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/analytics/water-intake": {
+      "get": {
+        "summary": "Get monthly water intake statistics for a user",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "description": "Month in YYYY-MM format (e.g., 2023-01)",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Monthly water intake statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterIntakeStats"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/analytics/sleep-summary": {
+      "get": {
+        "summary": "Get monthly sleep summary for a user",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "description": "Month in YYYY-MM format (e.g., 2023-01)",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Monthly sleep summary retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SleepSummary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/analytics/mood": {
+      "get": {
+        "summary": "Get monthly mood statistics for a user",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "description": "Month in YYYY-MM format (e.g., 2023-01)",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Monthly mood statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MoodStats"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/export/all": {
+      "get": {
+        "summary": "Export all user data as CSV",
+        "responses": {
+          "200": {
+            "description": "CSV file download",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "UserProfileUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      },
+      "DailyActivityRequest": {
+        "type": "object",
+        "properties": {
+          "stepsTaken": {
+            "type": "integer"
+          },
+          "caloriesBurned": {
+            "type": "integer"
+          },
+          "workoutType": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "type": "integer"
+          },
+          "activityDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "DailyActivityResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "stepsTaken": {
+            "type": "integer"
+          },
+          "caloriesBurned": {
+            "type": "integer"
+          },
+          "workoutType": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "type": "integer"
+          },
+          "activityDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "SleepRecordRequest": {
+        "type": "object",
+        "properties": {
+          "sleepDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "sleepStartTime": {
+            "type": "string",
+            "description": "Time in HH:mm:ss format",
+            "format": "time"
+          },
+          "sleepEndTime": {
+            "type": "string",
+            "description": "Time in HH:mm:ss format",
+            "format": "time"
+          },
+          "qualityRating": {
+            "type": "integer",
+            "description": "Sleep quality rating (1-5)"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "Sleep": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "sleepDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "sleepStartTime": {
+            "type": "string",
+            "description": "Time in HH:mm:ss format",
+            "format": "time"
+          },
+          "sleepEndTime": {
+            "type": "string",
+            "description": "Time in HH:mm:ss format",
+            "format": "time"
+          },
+          "sleepHours": {
+            "type": "number",
+            "description": "Calculated sleep hours",
+            "format": "double"
+          },
+          "qualityRating": {
+            "type": "integer",
+            "description": "Sleep quality rating (1-5)"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "WaterIntakeRequest": {
+        "type": "object",
+        "properties": {
+          "intakeDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "amountInLiters": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "WaterIntake": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "intakeDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "amountInLiters": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "MoodEntryRequest": {
+        "type": "object",
+        "properties": {
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "moodRating": {
+            "type": "integer",
+            "description": "Mood rating (e.g., 1-5)"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "Mood": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "moodRating": {
+            "type": "integer",
+            "description": "Mood rating (e.g., 1-5)"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyProgressRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "caloriesBurned": {
+            "type": "integer"
+          },
+          "outOfCaloriesBurned": {
+            "type": "integer"
+          },
+          "stepsTaken": {
+            "type": "integer"
+          },
+          "targetSteps": {
+            "type": "integer"
+          },
+          "spendWorkoutTime": {
+            "type": "integer"
+          },
+          "outOfWorkoutTime": {
+            "type": "integer"
+          }
+        }
+      },
+      "WeeklyProgressResponse": {
+        "type": "object",
+        "properties": {
+          "caloriesBurned": {
+            "type": "integer"
+          },
+          "stepsTaken": {
+            "type": "integer"
+          },
+          "spendWorkoutTimeMinutes": {
+            "type": "integer"
+          }
+        }
+      },
+      "GoalSettingRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of goal (e.g., \"steps\", \"water\", \"sleep\")"
+          },
+          "targetValue": {
+            "type": "integer",
+            "description": "The target value for the goal (e.g., 10000 steps or 8 glasses)"
+          },
+          "frequency": {
+            "type": "string",
+            "description": "How often the goal is tracked (e.g., \"daily\", \"weekly\")"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "GoalSetting": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of goal (e.g., \"steps\", \"water\", \"sleep\")"
+          },
+          "targetValue": {
+            "type": "integer",
+            "description": "The target value for the goal (e.g., 10000 steps or 8 glasses)"
+          },
+          "frequency": {
+            "type": "string",
+            "description": "How often the goal is tracked (e.g., \"daily\", \"weekly\")"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "SleepSummary": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "The date of the sleep record",
+            "format": "date"
+          },
+          "sleepHours": {
+            "type": "number",
+            "description": "Total sleep hours for the day",
+            "format": "double"
+          },
+          "qualityRating": {
+            "type": "integer",
+            "description": "Average quality rating for sleep on that day"
+          }
+        }
+      },
+      "MoodStats": {
+        "type": "object",
+        "properties": {
+          "entryDate": {
+            "type": "string",
+            "description": "The date of the mood entry",
+            "format": "date"
+          },
+          "moodRating": {
+            "type": "integer",
+            "description": "Average mood rating for the day"
+          }
+        }
+      },
+      "WaterIntakeStats": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "The date of the water intake",
+            "format": "date"
+          },
+          "waterLiters": {
+            "type": "number",
+            "description": "Total water intake in liters for the day",
+            "format": "double"
+          }
+        }
+      },
+      "inline_response_200": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "inline_response_200_1": {
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyProgressRequest"
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "daily": {
+                "$ref": "#/components/schemas/DailyProgressRequest"
+              },
+              "weekly": {
+                "$ref": "#/components/schemas/WeeklyProgressResponse"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "inline_response_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
